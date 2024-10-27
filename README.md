@@ -113,3 +113,43 @@ d86feaf80e98: Pushed
 v1: digest: sha256:acc745eb59c5c9c5853c31a121f67391b276eb4a206e6600bbaf7c6830cb884c size: 1783
 ```
 ![image](https://github.com/user-attachments/assets/3ab35532-effa-4075-8871-8eff5edecf64)
+
+## Create a GKE cluster instandard mode, zonal
+Connect to it and follow along
+
+```
+vi .bashrc
+
+source /google/devshell/bashrc.google
+source <(kubectl completion bash)
+alias k=kubectl
+complete -F __start_kubectl k
+
+```
+![image](https://github.com/user-attachments/assets/4048f05d-c364-4aba-adc0-da34eb0f07ac)
+
+run `bash`
+and create deployment of the image.
+
+```k create deployment flaskapp --image asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp:v1```
+
+![image](https://github.com/user-attachments/assets/9d27561c-5e98-4651-89d4-fbda7402f0a5)
+
+![image](https://github.com/user-attachments/assets/009d515c-07b4-4dc0-88bd-7f440070f361)
+
+Lets expose it now, to service of Type LoadBalancer.
+
+as we have expose this the app to port 8080 in Dockerfile to make the container avaialble of outside world on port 8080, we'll give `--target-port=8080` port could be any `--port=8081`
+
+```
+k expose deployment flaskapp --type LoadBalancer --target-port=8080 --port=8081 
+service/flaskapp exposed
+```
+
+```
+ k get svc flaskapp -w
+NAME       TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+flaskapp   LoadBalancer   34.118.228.159   34.68.92.48   8081:30482/TCP   51s
+```
+![image](https://github.com/user-attachments/assets/1fd4dc93-0149-454f-8e76-8b943512ee21)
+
