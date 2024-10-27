@@ -87,31 +87,51 @@ docker images
 REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
 flaskapp     v1        da7493fdab6c   10 minutes ago   136MB
 ```
-```shell
-docker tag flaskapp:v1 asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp:v1   
-```
-```
-docker images
-REPOSITORY                                                         TAG       IMAGE ID       CREATED          SIZE
-asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp   v1        da7493fdab6c   18 minutes ago   136MB
-flaskapp                                                           v1        da7493fdab6c   18 minutes ago   136MB
 
-```
-```
-docker push asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp:v1 
-The push refers to repository [asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp]
-eef8f0d896cc: Pushed 
-01b13bbe0346: Pushed 
-406df587f6fc: Pushed 
-d86feaf80e98: Pushed 
-19f5accf4683: Pushed 
-0300a07ea341: Pushed 
-98b5f35ea9d3: Pushing [===================================>               ]  53.28MB/74.78MB
-.
-.
-98b5f35ea9d3: Pushed 
-v1: digest: sha256:acc745eb59c5c9c5853c31a121f67391b276eb4a206e6600bbaf7c6830cb884c size: 1783
-```
+Using `gcloud auth configure-docker` is necessary to authenticate `docker` with Google Artifact Registry or Google Container Registry, but the repository path structure still needs to be correct. Let’s go over the steps to ensure you can push the image successfully.
+
+### Steps to Push an Image to Google Artifact Registry
+
+1. **Authenticate Docker with Artifact Registry**:
+   Run the following command to configure Docker to use `gcloud` credentials for the specified region (in your case, `asia-south1`):
+   ```bash
+   gcloud auth configure-docker asia-south1-docker.pkg.dev
+   ```
+
+2. **Ensure Correct Image Tag Format**:
+   When tagging your Docker image, use the full path format:
+   ```bash
+   docker tag flaskapp:v1 asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp:v1
+   ```
+   This format includes the region, project ID, repository name, and the image name with a tag.
+   ```
+    docker images
+    REPOSITORY                                                         TAG       IMAGE ID       CREATED          SIZE
+    asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp   v1        da7493fdab6c   18 minutes ago   136MB
+    flaskapp                                                           v1        da7493fdab6c   18 minutes ago   136MB
+    
+    ```
+
+4. **Push the Image**:
+   Now, you can push the image using:
+   ```
+    docker push asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp:v1 
+    The push refers to repository [asia-south1-docker.pkg.dev/gke-project-439604/flask-app/flaskapp]
+    eef8f0d896cc: Pushed 
+    01b13bbe0346: Pushed 
+    406df587f6fc: Pushed 
+    d86feaf80e98: Pushed 
+    19f5accf4683: Pushed 
+    0300a07ea341: Pushed 
+    98b5f35ea9d3: Pushing [===================================>               ]  53.28MB/74.78MB
+    .
+    .
+    98b5f35ea9d3: Pushed 
+    v1: digest: sha256:acc745eb59c5c9c5853c31a121f67391b276eb4a206e6600bbaf7c6830cb884c size: 1783
+    ```
+
+
+
 ![image](https://github.com/user-attachments/assets/3ab35532-effa-4075-8871-8eff5edecf64)
 
 ## Create a GKE cluster instandard mode, zonal
